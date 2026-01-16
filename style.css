@@ -1,10 +1,12 @@
 :root {
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    --glass-bg: rgba(255, 255, 255, 0.85);
-    --text-main: #1f2937;
-    --text-muted: #6b7280;
+    --glass-bg: rgba(255, 255, 255, 0.08); /* 👈 glass transparency */
+    --text-main: #e5e7eb;
+    --text-muted: #cbd5f5;
     --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
+    --border-glow: rgba(99, 102, 241, 0.75);
 }
+
 
 * {
     margin: 0;
@@ -41,16 +43,23 @@ body::before {
 
 .form-box {
     width: 400px;
-    height: auto; 
+    height: auto;
     background: var(--glass-bg);
-    backdrop-filter: blur(12px);
+    backdrop-filter: blur(10px);
+
     padding: 30px 40px 40px 40px;
     border-radius: 24px;
-    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
-    border: 1px solid rgba(255, 255, 255, 0.3);
+
+    border: 1.5px solid rgba(255, 255, 255, 0.25);
+
+    box-shadow:
+        0 0 25px var(--border-glow),
+        inset 0 0 18px rgba(255, 255, 255, 0.05);
+
     position: relative;
     margin-bottom: 20px;
 }
+
 
 .button-box {
     width: 240px;
@@ -135,7 +144,7 @@ body::before {
 .forgot-link { text-align: right; margin-top: -5px; }
 .forgot-link a {
     font-size: 12px;
-    color: #6366f1;
+    color: #ffffff;
     text-decoration: none;
     font-weight: 500;
 }
@@ -356,3 +365,4 @@ select.input-field {
     from { width: 100%; }
     to { width: 0%; }
 }
+

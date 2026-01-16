@@ -7,51 +7,45 @@
 </head>
 <body>
 
-<div class="bg-wrapper">   <!-- ADD THIS -->
+<div class="profile-container">
+    <h2>Job Seeker Profile</h2>
 
-    <div class="profile-container">
-        <h2>Job Seeker Profile</h2>
+    <form>
+        <!-- Personal Information -->
+        <div class="section">
+            <h3>Personal Information</h3>
 
-        <form id="profileForm">
-            <!-- Personal Information -->
-            <div class="section">
-                <h3>Personal Information</h3>
+            <label>Full Name</label>
+            <input type="text" placeholder="Enter your name" required>
 
-                <label>Full Name</label>
-                <input type="text" placeholder="Enter your name" required>
+            <label>Email</label>
+            <input type="email" placeholder="Enter your email" required>
 
-                <label>Email</label>
-                <input type="email" placeholder="Enter your email" required>
+            <label>Date of Birth</label>
+            <input type="date">
+        </div>
 
-                <label>Date of Birth</label>
-                <input type="date">
-            </div>
+        <!-- Contact Details -->
+        <div class="section">
+            <h3>Contact Details</h3>
 
-            <!-- Contact Details -->
-            <div class="section">
-                <h3>Contact Details</h3>
+            <label>Phone Number</label>
+            <input type="tel" placeholder="Enter phone number">
 
-                <label>Phone Number</label>
-                <input type="tel" placeholder="Enter phone number">
+            <label>Location</label>
+            <input type="text" placeholder="City, Country">
+        </div>
 
-                <label>Location</label>
-                <input type="text" placeholder="City, Country">
-            </div>
+        <!-- Resume Upload -->
+        <div class="section">
+            <h3>Resume Upload</h3>
 
-            <!-- Resume Upload -->
-            <div class="section">
-                <h3>Resume Upload</h3>
+            <input type="file" accept=".pdf,.doc,.docx">
+        </div>
 
-                <input type="file" id="resume" accept=".pdf,.doc,.docx">
-                <p id="fileName">No file selected</p>
-            </div>
+        <button type="submit">Save Profile</button>
+    </form>
+</div>
 
-            <button type="submit">Save Profile</button>
-        </form>
-    </div>
-
-</div>   <!-- END bg-wrapper -->
-
-<script src="profile.js"></script>
 </body>
 </html>

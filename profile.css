@@ -1,0 +1,101 @@
+* {
+    box-sizing: border-box;
+    font-family: Arial, sans-serif;
+}
+
+body {
+    background-color: #f4f6f8;
+    margin: 0;
+    padding: 0;
+}
+
+.profile-container {
+    max-width: 720px;          /* wider card */
+    width: 90%;                /* responsive */
+    margin: 40px auto;
+    background: #ffffff;
+    padding: 40px 45px;        /* more breathing space */
+    border-radius: 14px;       /* smoother corners */
+    box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25); /* stronger shadow */
+}
+
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.section {
+    margin-bottom: 25px;
+}
+
+.section h3 {
+    margin-bottom: 10px;
+    color: #333;
+}
+
+label {
+    display: block;
+    margin: 8px 0 4px;
+}
+
+input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 5px;
+    border: 1px solid #ccc;
+}
+
+input[type="file"] {
+    border: none;
+}
+
+#fileName {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+}
+
+button {
+    width: 100%;
+    padding: 12px;
+    background-color: #007bff;
+    color: white;
+    font-size: 16px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+/* Background image wrapper */
+.bg-wrapper {
+    min-height: 100vh;
+    width: 100%;
+    background-image: url("bg.jpg"); /* your image */
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+}
+
+/* Dark overlay + blur */
+.bg-wrapper::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.45);
+    backdrop-filter: blur(4px);
+    z-index: 0;
+}
+
+/* Keep profile card above overlay */
+.profile-container {
+    position: relative;
+    z-index: 1;
+}

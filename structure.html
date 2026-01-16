@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal - Authentication</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="auth-container">
+        <div class="form-box">
+            <div class="button-box">
+                <div id="btn"></div>
+                <button type="button" class="toggle-btn active" onclick="login()">Log In</button>
+                <button type="button" class="toggle-btn" onclick="register()">Register</button>
+            </div>
+
+            <form id="login" class="input-group active-form">
+                <input type="email" class="input-field" placeholder="Email Address" required>
+                
+                <div class="password-wrapper">
+                    <input type="password" class="input-field" id="login-pass" placeholder="Enter Password" required>
+                    <i class="fa-solid fa-eye-slash toggle-eye" onclick="togglePassword('login-pass', this)"></i>
+                </div>
+
+                <div class="forgot-link">
+                    <a href="#" onclick="openModal()">Forgot Password?</a>
+                </div>
+
+                <div class="checkbox-group">
+                    <input type="checkbox" id="rem-pass" class="check-box">
+                    <label for="rem-pass">Remember Password</label>
+                </div>
+                <button type="submit" class="submit-btn">Log In</button>
+            </form>
+
+            <form id="register" class="input-group">
+                <input type="text" class="input-field" placeholder="Full Name" required>
+                <input type="email" class="input-field" placeholder="Email Address" required>
+                
+                <div class="password-wrapper">
+                    <input type="password" class="input-field" id="reg-pass" placeholder="Password" required>
+                    <i class="fa-solid fa-eye-slash toggle-eye" onclick="togglePassword('reg-pass', this)"></i>
+                </div>
+                <span id="reg-error" class="error-msg"></span> 
+
+                <div class="password-wrapper">
+                    <input type="password" class="input-field" id="confirm-pass" placeholder="Confirm Password" required>
+                    <i class="fa-solid fa-eye-slash toggle-eye" onclick="togglePassword('confirm-pass', this)"></i>
+                </div>
+
+                <div class="role-container">
+                    <p>Register as:</p>
+                    <div class="role-selection">
+                        <input type="radio" name="user-role" id="candidate" value="candidate" checked>
+                        <label for="candidate" class="role-card">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>Candidate</span>
+                        </label>
+
+                        <input type="radio" name="user-role" id="employer" value="employer">
+                        <label for="employer" class="role-card">
+                            <i class="fa-solid fa-building"></i>
+                            <span>Employer</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="role-container">
+                    <p>Security Verification:</p>
+                    <select name="security_question" class="input-field" required>
+                        <option value="" disabled selected>Select a Security Question</option>
+                        <option value="What is your pet's name?">What is your pet's name?</option>
+                        <option value="What was your first car?">What was your first car?</option>
+                        <option value="What city were you born in?">What city were you born in?</option>
+                    </select>
+                    <input type="text" name="security_answer" class="input-field" placeholder="Your Answer" required>
+                </div>
+                <div class="checkbox-group">
+                    <input type="checkbox" id="terms" class="check-box" required>
+                    <label for="terms">I agree to terms & conditions</label>
+                </div>
+                <button type="submit" class="submit-btn">Register</button>
+            </form>
+        </div>
+    </div>
+
+    <div id="forgotModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" onclick="closeModal()">&times;</span>
+            <h2>Reset Password</h2>
+            <p>Enter your email to receive a reset link.</p>
+            <form id="forgot-password-form">
+                <input type="email" class="input-field" placeholder="Email Address" required style="margin-bottom: 20px;">
+                <button type="submit" class="submit-btn">Send Link</button>
+            </form>
+        </div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html>

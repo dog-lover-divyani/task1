@@ -144,6 +144,12 @@ if (isset($_POST['update_password'])) {
                     <label for="rem-pass">Remember Password</label>
                 </div>
                 <button type="submit" name="login" class="submit-btn">Log In</button>
+                <div class = "oauth-divider">
+                    <span>---------------or---------------</span>
+                </div>
+                <a href="google-login.php" class="submit-btn" style="text-align:center;">
+                    <i class="fa-brands fa-google"></i> Continue with Google
+                </a>
             </form>
 
             <form id="register" method="POST" action="index.php" class="input-group">
@@ -229,6 +235,6 @@ if (isset($_POST['update_password'])) {
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script (1).js"></script>
 </body>
 </html>

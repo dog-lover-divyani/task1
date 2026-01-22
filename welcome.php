@@ -7,6 +7,9 @@ if (!isset($_SESSION['user_name'])) {
     exit();
 }
 
+header("Location: job-seeker-profile.php");
+exit();
+?>
 // Retrieve and clear flash messages
 $message = isset($_SESSION['toast_msg']) ? $_SESSION['toast_msg'] : "";
 $msgClass = isset($_SESSION['toast_type']) ? $_SESSION['toast_type'] : "";

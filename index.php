@@ -95,7 +95,7 @@ if (isset($_POST['verify_answer'])) {
 if (isset($_POST['update_password'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email_to_reset']);
     $newPass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
-    $conn->query("UPDATE users SET password='$newPass' WHERE email='$email'");
+    $conn->query("UPDATE users SET password='$newPass' WHERE email='$email'"); 
     $message = "Password reset successful! You can now log in.";
     $step = 1;
 }

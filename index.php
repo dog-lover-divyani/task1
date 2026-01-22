@@ -3,12 +3,11 @@ include 'db.php';
 session_start();
 
 $message = "";
-$msgClass = "";
-$step = 1;
+$step = 1; // 1: Email, 2: Answer, 3: Reset
 $resetEmail = "";
 $fetchedQuestion = "";
 
-/* ---------- REGISTER ---------- */
+// --- Registration Logic ---
 if (isset($_POST['register'])) {
     $name = mysqli_real_escape_string($conn, $_POST['full_name']);
     $email = mysqli_real_escape_string($conn, $_POST['email']);
@@ -17,55 +16,101 @@ if (isset($_POST['register'])) {
     $question = mysqli_real_escape_string($conn, $_POST['security_question']);
     $answer = password_hash(strtolower(trim($_POST['security_answer'])), PASSWORD_DEFAULT);
 
-    $checkEmail = "SELECT id FROM users WHERE email='$email'";
+    $checkEmail = "SELECT email FROM users WHERE email='$email'";
     if ($conn->query($checkEmail)->num_rows > 0) {
         $message = "Email already exists!";
-        $msgClass = "error";
     } else {
-        $sql = "INSERT INTO users (full_name,email,password,role,security_question,security_answer)
-                VALUES ('$name','$email','$password','$role','$question','$answer')";
+        $sql = "INSERT INTO users (full_name, email, password, role, security_question, security_answer) 
+                VALUES ('$name', '$email', '$password', '$role', '$question', '$answer')";
         if ($conn->query($sql)) {
             $message = "Registration successful! Please log in.";
-            $msgClass = "success";
         }
     }
 }
 
-/* ---------- LOGIN ---------- */
+// --- Login Logic ---
+// --- Updated Login Logic in index.php ---
 if (isset($_POST['login'])) {
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
-
     $sql = "SELECT * FROM users WHERE email='$email'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
         $user = $result->fetch_assoc();
         if (password_verify($password, $user['password'])) {
+            // Set session variables
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
+            
+            // Set "Flash" message for the Welcome page
+            $_SESSION['toast_msg'] = "Login successful! Welcome back, " . $user['full_name'];
+            $_SESSION['toast_type'] = "success";
+
+            // Redirect to welcome page
             header("Location: welcome.php");
-            exit();
-        } else {
-            $message = "Invalid password.";
+            exit(); // Always call exit after header redirect
+        } else { 
+            $message = "Invalid password."; 
             $msgClass = "error";
         }
-    } else {
-        $message = "No account found.";
+    } else { 
+        $message = "No account found."; 
         $msgClass = "error";
     }
+}
+
+// --- Multi-Step Forgot Password Logic ---
+if (isset($_POST['verify_email'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $sql = "SELECT security_question FROM users WHERE email='$email'";
+    $result = $conn->query($sql);
+    if ($result->num_rows > 0) {
+        $user = $result->fetch_assoc();
+        $fetchedQuestion = $user['security_question'];
+        $resetEmail = $email;
+        $step = 2;
+    } else { $message = "Email not found."; }
+}
+
+if (isset($_POST['verify_answer'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email_to_reset']);
+    $answerInput = strtolower(trim($_POST['security_answer']));
+    
+    $sql = "SELECT security_answer, security_question FROM users WHERE email='$email'";
+    $result = $conn->query($sql);
+    $user = $result->fetch_assoc();
+
+    if (password_verify($answerInput, $user['security_answer'])) {
+        $resetEmail = $email;
+        $step = 3;
+    } else {
+        $message = "Incorrect answer.";
+        $fetchedQuestion = $user['security_question'];
+        $resetEmail = $email;
+        $step = 2; 
+    }
+}
+
+if (isset($_POST['update_password'])) {
+    $email = mysqli_real_escape_string($conn, $_POST['email_to_reset']);
+    $newPass = password_hash($_POST['new_password'], PASSWORD_DEFAULT);
+    $conn->query("UPDATE users SET password='$newPass' WHERE email='$email'");
+    $message = "Password reset successful! You can now log in.";
+    $step = 1;
 }
 ?>
 
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Auth</title>
-<link rel="stylesheet" href="style.css">
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Portal - Authentication</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.2/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
 </head>
-
 <body>
     <?php if($message != ""): ?>
         <div id="toast" class="toast-notification <?php echo $msgClass; ?>">
@@ -99,12 +144,6 @@ if (isset($_POST['login'])) {
                     <label for="rem-pass">Remember Password</label>
                 </div>
                 <button type="submit" name="login" class="submit-btn">Log In</button>
-                <div class = "oauth-divider">
-                    <span>---------------or</span>
-                </div>
-                <a href="google-login.php" class="submit-btn" style="text-align:center;">
-                    <i class="fa-brands fa-google"></i> Continue with Google
-                </a>
             </form>
 
             <form id="register" method="POST" action="index.php" class="input-group">

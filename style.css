@@ -1,199 +1,237 @@
 :root {
     --primary-gradient: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
-    --glass-bg: rgba(255, 255, 255, 0.88);
+    --glass-bg: rgba(255, 255, 255, 0.85);
     --text-main: #1f2937;
     --text-muted: #6b7280;
-    --transition: all 0.35s ease;
+    --transition-smooth: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
 }
 
 * {
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
     font-family: 'Poppins', sans-serif;
+    box-sizing: border-box;
 }
 
 body {
-    min-height: 100vh;
+    min-height: 100vh; 
+    width: 100%;
     display: flex;
     justify-content: center;
     align-items: center;
-    background: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174')
-        center / cover no-repeat;
+    padding: 40px 0; /* Adds space at top/bottom when scrolling */
+    background: url('https://images.unsplash.com/photo-1497215728101-856f4ea42174?auto=format&fit=crop&q=80&w=2070') no-repeat center center/cover;
     position: relative;
+    overflow-y: auto; /* Enable vertical scroll */
 }
 
+/* Dark Overlay */
 body::before {
     content: "";
     position: absolute;
-    inset: 0;
+    top: 0; left: 0; width: 100%; height: 100%;
     background: rgba(15, 23, 42, 0.6);
+    z-index: 0;
 }
 
 .auth-container {
     position: relative;
-    z-index: 2;
+    z-index: 1;
 }
 
 .form-box {
-    width: auto;
+    width: 400px;
+    height: auto; 
     background: var(--glass-bg);
-    padding: 32px 40px 44px;
-    border-radius: 26px;
     backdrop-filter: blur(12px);
-    box-shadow: 0 25px 50px rgba(0,0,0,0.45);
-    overflow: visible; 
+    padding: 30px 40px 40px 40px;
+    border-radius: 24px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    position: relative;
+    margin-bottom: 20px;
 }
 
-/* Toggle */
 .button-box {
-    display: flex;
-    background: #f1f5f9;
-    border-radius: 50px;
-    padding: 6px;
-    margin-bottom: 26px;
+    width: 240px;
+    margin: 20px auto; /* Reduced from 30px */
     position: relative;
+    border-radius: 50px;
+    background: #f1f5f9;
+    display: flex;
+    padding: 5px;
+    z-index: 10;
 }
 
 .toggle-btn {
     flex: 1;
-    border: none;
-    background: transparent;
-    padding: 12px;
-    font-weight: 600;
+    padding: 12px 0;
     cursor: pointer;
+    background: transparent;
+    border: 0;
+    outline: none;
+    position: relative;
+    font-weight: 600;
+    font-size: 14px;
     z-index: 2;
     color: var(--text-muted);
-}
-
-.toggle-btn.active {
-    color: #fff;
+    transition: var(--transition-smooth);
 }
 
 #btn {
+    top: 5px;
+    left: 5px;
     position: absolute;
-    left: 6px;
-    top: 6px;
-    width: calc(50% - 6px);
-    height: calc(100% - 12px);
+    width: 115px;
+    height: calc(100% - 10px);
     background: var(--primary-gradient);
     border-radius: 50px;
-    transition: var(--transition);
+    transition: var(--transition-smooth);
+    z-index: 1;
+    box-shadow: 0 4px 15px rgba(99, 102, 241, 0.3);
 }
 
-/* Forms */
+/* Active Button Color */
+.toggle-btn.active { color: #fff; }
+
 .input-group {
-    display: none;
-    flex-direction: column;
-    gap: 14px;
+    position: relative; 
+    width: 100%;
+    transition: var(--transition-smooth);
+    /* Remove display: none from here */
+    display: none; 
     opacity: 0;
     transform: translateY(10px);
-    transition: var(--transition);
-    position: relative;
-}
-
-.input-group.active-form {
-    display: flex;
-    opacity: 1;
-    transform: translateY(0);
 }
 
 .input-field {
     width: 100%;
     padding: 14px 16px;
+    margin: 10px 0;
     border-radius: 12px;
-    border: 1.5px solid #e5e7eb;
-    margin-bottom: 14px;
+    border: 1.5px solid #e2e8f0;
+    outline: none;
+    background: #fff;
     font-size: 14px;
+    transition: var(--transition-smooth);
 }
 
-.password-wrapper {
-    position: relative;
+.input-field:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 4px rgba(99, 102, 241, 0.1);
 }
+
+.password-wrapper { position: relative; }
 
 .toggle-eye {
     position: absolute;
-    right: 14px;
+    right: 15px;
     top: 50%;
     transform: translateY(-50%);
     cursor: pointer;
     color: var(--text-muted);
 }
 
-.forgot-link {
-    text-align: right;
-    margin-bottom: 12px;
-}
-
+.forgot-link { text-align: right; margin-top: -5px; }
 .forgot-link a {
     font-size: 12px;
     color: #6366f1;
     text-decoration: none;
+    font-weight: 500;
 }
 
 .checkbox-group {
     display: flex;
     align-items: center;
+    margin: 15px 0; /* Reduced from 20px */
     gap: 8px;
     font-size: 13px;
     color: var(--text-muted);
-    margin-bottom: 18px;
 }
 
 .submit-btn {
     width: 100%;
     padding: 14px;
-    border-radius: 14px;
-    border: none;
-    background: var(--primary-gradient);
-    color: #fff;
-    font-weight: 600;
-    font-size: 16px;
     cursor: pointer;
-    margin-bottom: 22px; 
+    background: var(--primary-gradient);
+    border: 0;
+    border-radius: 12px;
+    color: #fff;
+    font-size: 16px;
+    font-weight: 600;
+    transition: var(--transition-smooth);
+    box-shadow: 0 10px 15px -3px rgba(99, 102, 241, 0.3);
 }
 
-/* OR + GOOGLE */
-.oauth-wrapper {
-    margin-top: 22px;
-    display: flex;
-    flex-direction: column;
-    gap: 16px;
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 20px 25px -5px rgba(99, 102, 241, 0.4);
 }
 
-.oauth-divider {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+/* Modal Enhancements */
+.modal-content {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+/* ... keep your existing styles ... */
+
+/* Fixed Modal Overlay Styles */
+.modal {
+    display: none; 
+    position: fixed; 
+    z-index: 100; 
+    left: 0;
+    top: 0;
+    width: 100%; 
+    height: 100%; 
+    background-color: rgba(0, 0, 0, 0.6); 
+    backdrop-filter: blur(5px);
+}
+
+.modal-content {
+    background: #fff;
+    border-radius: 24px;
+    padding: 40px;
+    width: 90%;
+    max-width: 400px;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+}
+
+.close-btn {
+    float: right;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--text-muted);
+}
+
+/* Responsive fix for mobile */
+@media (max-width: 450px) {
+    .form-box {
+        width: 90%;
+        height: auto;
+        padding: 20px 20px 40px 20px;
+    }
+    .input-group {
+        width: 80%;
+    }
+}
+
+.role-container {
+    margin: 10px 0; /* Reduced from 15px */
+}
+
+.role-container p {
     font-size: 13px;
     color: var(--text-muted);
-    margin-bottom: 14px;
-}
-
-.oauth-divider::before,
-.oauth-divider::after {
-    content: "";
-    flex: 1;
-    height: 1px;
-    background: #e5e7eb;
-}
-
-.google-btn {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    gap: 10px;
-    padding: 14px;
-    border-radius: 14px;
-    text-decoration: none;
-    color: #fff;
-    background: var(--primary-gradient);
-    font-weight: 600;
-}
-
-/* Roles */
-.role-container {
-    margin-bottom: 18px;
+    margin-bottom: 5px; /* Reduced from 8px */
+    font-weight: 500;
 }
 
 .role-selection {
@@ -201,25 +239,120 @@ body::before {
     gap: 12px;
 }
 
-.role-selection input {
+/* Hide default radio buttons */
+.role-selection input[type="radio"] {
     display: none;
 }
 
 .role-card {
     flex: 1;
-    padding: 12px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 1.5px solid #e2e8f0;
     border-radius: 12px;
-    border: 1.5px solid #e5e7eb;
-    text-align: center;
     cursor: pointer;
+    transition: var(--transition-smooth);
+    background: #fff;
 }
 
-.role-selection input:checked + .role-card {
+.role-card i {
+    font-size: 18px;
+    margin-bottom: 5px;
+    color: var(--text-muted);
+}
+
+.role-card span {
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-muted);
+}
+
+/* Styled state for selected radio */
+.role-selection input[type="radio"]:checked + .role-card {
     border-color: #6366f1;
+    background: rgba(99, 102, 241, 0.05);
+}
+
+.role-selection input[type="radio"]:checked + .role-card i,
+.role-selection input[type="radio"]:checked + .role-card span {
     color: #6366f1;
 }
 
-.form-box {
-    height: auto !important;
-    max-height: none !important;
+.input-group.active-form {
+    display: block;
+    opacity: 1;
+    transform: translateY(0);
+}
+
+select.input-field {
+    appearance: none;
+    background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+    background-repeat: no-repeat;
+    background-position: right 1rem center;
+    background-size: 1em;
+    cursor: pointer;
+}
+
+/* Toast Notification Styles */
+.toast-notification {
+    position: fixed;
+    top: 25px;
+    right: 25px;
+    background: #fff;
+    padding: 15px 25px;
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+    z-index: 1001;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    animation: slideIn 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.toast-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+    color: var(--text-main);
+}
+
+.toast-notification.error { border-left: 5px solid #ef4444; }
+.toast-notification.success { border-left: 5px solid #10b981; }
+
+.toast-notification.error i { color: #ef4444; }
+.toast-notification.success i { color: #10b981; }
+
+/* Progress Bar Animation */
+.progress-bar {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    height: 3px;
+    width: 100%;
+    background: rgba(0,0,0,0.05);
+}
+
+.progress-bar::after {
+    content: '';
+    position: absolute;
+    height: 100%;
+    width: 100%;
+    background: inherit;
+    animation: progress 4s linear forwards;
+}
+
+.error .progress-bar::after { background: #ef4444; }
+.success .progress-bar::after { background: #10b981; }
+
+@keyframes slideIn {
+    from { transform: translateX(120%); }
+    to { transform: translateX(0); }
+}
+
+@keyframes progress {
+    from { width: 100%; }
+    to { width: 0%; }
 }

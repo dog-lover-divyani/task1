@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CareerVault Dashboard</title>
+    <link rel="stylesheet" href="dashboard.css">
+</head>
+<body>
+
+<div class="app">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+        <div class="logo">
+            <span class="logo-icon">C</span>
+            CareerVault
+        </div>
+
+        <nav>
+            <a class="active">🏠 Dashboard</a>
+            <a>👤 My Profile</a>
+            <a>📄 My Resume</a>
+            <a>💼 Jobs</a>
+            <a>❤️ Saved</a>
+            <a>📂 Applications</a>
+            <a>⚙️ Settings</a>
+        </nav>
+
+        <div class="user">
+            <img src="https://i.pravatar.cc/100?img=32">
+            <div>
+                <strong>Divy</strong>
+                <span>divy@example.com</span>
+            </div>
+        </div>
+
+        <button class="logout">Logout</button>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+        <!-- TOP BAR -->
+        <header class="topbar">
+            <input type="text" placeholder="Search for jobs...">
+            <div class="top-icons">
+                🔔
+                <img src="https://i.pravatar.cc/40?img=32">
+            </div>
+        </header>
+
+        <!-- WELCOME CARD -->
+        <section class="welcome-card">
+            <div>
+                <h2>Welcome back, Divy 👋</h2>
+                <p>Your career dashboard at a glance</p>
+            </div>
+            <button class="primary">Complete Profile</button>
+        </section>
+
+        <!-- STATS -->
+        <section class="stats">
+            <div class="stat-card">
+                <h3>75%</h3>
+                <p>Profile Completion</p>
+            </div>
+            <div class="stat-card">
+                <h3>10</h3>
+                <p>Applied Jobs</p>
+            </div>
+            <div class="stat-card">
+                <h3>6</h3>
+                <p>Saved Jobs</p>
+            </div>
+            <div class="stat-card">
+                <h3>2</h3>
+                <p>Interview Calls</p>
+            </div>
+        </section>
+
+        <!-- RESUME -->
+        <section class="resume-card">
+            <div>
+                <h3>My Resume</h3>
+                <p>resume_divy.pdf • Updated today</p>
+            </div>
+            <button class="primary">Apply Now</button>
+        </section>
+
+        <!-- JOBS -->
+        <section class="jobs">
+            <h3>Recommended Jobs</h3>
+
+            <div class="job">
+                <div>
+                    <strong>Frontend Developer</strong>
+                    <p>Tech Innovations • Remote</p>
+                </div>
+                <button>Apply Now</button>
+            </div>
+
+            <div class="job">
+                <div>
+                    <strong>UI/UX Designer</strong>
+                    <p>Creative Minds • Bangalore</p>
+                </div>
+                <button>Apply Now</button>
+            </div>
+        </section>
+
+    </main>
+</div>
+
+<script src="dashboard.js"></script>
+</body>
+</html>

@@ -65,7 +65,7 @@ if (isset($_POST['save_profile'])) {
 <body>
 
 <div class="profile-container">
-    <h2>Job Seeker Profile</h2>
+    <h2>CareerVault Profile</h2>
 
     <form method="POST" action="" enctype="multipart/form-data">
 

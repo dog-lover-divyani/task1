@@ -7,6 +7,11 @@
 
 body {
   background: linear-gradient(135deg, #f4f1ff, #faf8ff);
+  background-image: url(https://plus.unsplash.com/premium_photo-1764691455367-3f974487f044?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8YmFja2dyb3VuZCUyMGltYWdlJTIwZm9yJTIwcmVzdW1lJTIwd2VifGVufDB8fDB8fHww);
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
 }
 
 /* LAYOUT */
@@ -18,7 +23,8 @@ body {
 /* SIDEBAR */
 .sidebar {
   width: 240px;
-  background: rgba(176, 160, 255, 0.45); /* 👈 reduced opacity */
+  background: rgba(176, 160, 255, 0.45);
+  /* 👈 reduced opacity */
   backdrop-filter: blur(20px);
   padding: 20px;
   display: flex;
@@ -96,7 +102,8 @@ body {
 }
 
 .topbar input::placeholder {
-  color: #ffffff; /* 👈 FIXED */
+  color: #ffffff;
+  /* 👈 FIXED */
 }
 
 .user img {
@@ -127,7 +134,8 @@ body {
 }
 
 .primary:hover {
-  box-shadow: 0 0 20px rgba(143, 124, 255, 0.9); /* ✨ glow */
+  box-shadow: 0 0 20px rgba(143, 124, 255, 0.9);
+  /* ✨ glow */
   transform: translateY(-2px);
 }
 

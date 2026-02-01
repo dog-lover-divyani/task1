@@ -1,12 +1,12 @@
 <?php
 $host = "localhost";
-$user = "root"; // Default XAMPP user
-$pass = "";     // Default XAMPP password
-$dbname = "job_portal";
+$user = "root";
+$pass = "";
+$db   = "job_portal";
 
-$conn = new mysqli($host, $user, $pass, $dbname);
+$conn = mysqli_connect($host, $user, $pass, $db);
 
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+if (!$conn) {
+    die("Database connection failed: " . mysqli_connect_error());
 }
 ?>

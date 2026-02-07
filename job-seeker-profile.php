@@ -1,8 +1,8 @@
 <?php
 session_start();
-include 'db.php';
+include("db.php");
 
-if (!isset($_SESSION['user_name'])) {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
@@ -12,20 +12,23 @@ $error = "";
 
 if (isset($_POST['save_profile'])) {
 
-    $name = mysqli_real_escape_string($conn, $_POST['full_name']);
-    $email = mysqli_real_escape_string($conn, $_POST['email']);
+    $user_id = $_SESSION['user_id'];
     $dob = $_POST['dob'];
     $phone = mysqli_real_escape_string($conn, $_POST['phone']);
     $location = mysqli_real_escape_string($conn, $_POST['location']);
 
-    // ==== RESUME UPLOAD ====
+    // ===== Resume Upload =====
     $resumeName = "";
+
     if (!empty($_FILES['resume']['name'])) {
 
         $uploadDir = "uploads/resumes/";
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
         $fileName = time() . "_" . basename($_FILES["resume"]["name"]);
         $targetPath = $uploadDir . $fileName;
-
         $fileType = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
         $allowed = ['pdf', 'doc', 'docx'];
 
@@ -41,13 +44,22 @@ if (isset($_POST['save_profile'])) {
     }
 
     if ($error == "") {
-        $sql = "INSERT INTO job_seeker_profiles 
-                (user_name, email, dob, phone, location, resume) 
-                VALUES 
-                ('$name', '$email', '$dob', '$phone', '$location', '$resumeName')";
+
+        // Prevent duplicate profile
+        $check = $conn->query("SELECT id FROM job_seeker_profiles WHERE user_id = $user_id");
+
+        if ($check->num_rows > 0) {
+            $sql = "UPDATE job_seeker_profiles 
+                    SET dob='$dob', phone='$phone', location='$location', resume='$resumeName'
+                    WHERE user_id=$user_id";
+        } else {
+            $sql = "INSERT INTO job_seeker_profiles (user_id, dob, phone, location, resume)
+                    VALUES ('$user_id', '$dob', '$phone', '$location', '$resumeName')";
+        }
 
         if ($conn->query($sql)) {
-            $success = "Profile saved successfully!";
+            header("Location: dashboard.php");
+            exit();
         } else {
             $error = "Database error.";
         }
@@ -56,9 +68,8 @@ if (isset($_POST['save_profile'])) {
 ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
     <title>Job Seeker Profile</title>
     <link rel="stylesheet" href="profile.css">
 </head>

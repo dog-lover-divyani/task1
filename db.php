@@ -1,10 +1,5 @@
 <?php
-$host = "localhost";
-$user = "root";
-$pass = "";
-$db   = "job_portal";
-
-$conn = mysqli_connect($host, $user, $pass, $db);
+$conn = mysqli_connect("localhost", "root", "", "job_portal");
 
 if (!$conn) {
     die("Database connection failed: " . mysqli_connect_error());

@@ -15,26 +15,39 @@ if (isset($_POST['apply_job'])) {
     $job = $_POST['job'];
     $company = $_POST['company'];
 
-    $applyQuery = $conn->prepare(
-        "INSERT INTO job_applications (user_id, job_title, company)
-         VALUES (?, ?, ?)"
+    $check = $conn->prepare(
+        "SELECT id FROM job_applications WHERE user_id = ? AND job_title = ?"
     );
-    $applyQuery->bind_param("iss", $userId, $job, $company);
-    $applyQuery->execute();
+    $check->bind_param("is", $userId, $job);
+    $check->execute();
+    $check->store_result();
+
+    if ($check->num_rows == 0) {
+        $applyQuery = $conn->prepare(
+            "INSERT INTO job_applications (user_id, job_title, company)
+             VALUES (?, ?, ?)"
+        );
+        $applyQuery->bind_param("iss", $userId, $job, $company);
+        $applyQuery->execute();
+    }
 }
+
 
 /* ✅ FETCH ALREADY APPLIED JOBS */
 $appliedJobs = [];
+
 $appQuery = $conn->prepare(
     "SELECT job_title FROM job_applications WHERE user_id = ?"
 );
 $appQuery->bind_param("i", $userId);
 $appQuery->execute();
+
 $res = $appQuery->get_result();
 
 while ($row = $res->fetch_assoc()) {
     $appliedJobs[] = $row['job_title'];
 }
+
 
 /* 👤 Fetch user data */
 $userQuery = $conn->prepare(
@@ -77,14 +90,14 @@ $resumeName = ($profile && $profile['resume'])
     <h2 class="logo">CareerVault</h2>
 
     <nav>
-      <a class="active">🏠 Dashboard</a>
-      <a>👤 My Profile</a>
-      <a>📄 My Resume</a>
-      <a>💼 Jobs</a>
-      <a>❤️ Saved</a>
-      <a>📁 Applications</a>
-      <a>⚙️ Settings</a>
+      <a href="dashboard.php" class="active">🏠 Dashboard</a>
+      <a href="profile.php">👤 Profile</a>
+      <a href="resume.php">📄 Resume</a>
+      <a href="applied-jobs.php">💼 Applied Jobs</a>
+      <a href="saved-jobs.php">❤️ Saved Jobs</a>
+      <a href="settings.php">⚙ Settings</a>
     </nav>
+
 
     <div class="user-box">
       <?php if (!empty($user['profile_pic'])) { ?>
@@ -159,27 +172,23 @@ $resumeName = ($profile && $profile['resume'])
     <h3 class="section-title">Recommended Jobs</h3>
 
     <?php
-      $jobs = [
-        ["Frontend Developer", "Tech Innovations · Remote"],
-        ["UI/UX Designer", "Creative Minds · Bangalore"]
-      ];
-
-      foreach ($jobs as $job) {
-        $applied = in_array($job[0], $appliedJobs);
-    ?>
-    <form method="POST" class="job card wide">
-      <div>
-        <h4><?= $job[0] ?></h4>
-        <p><?= $job[1] ?></p>
-      </div>
-
-      <input type="hidden" name="job" value="<?= $job[0] ?>">
-      <input type="hidden" name="company" value="<?= explode(' · ', $job[1])[0] ?>">
-
-      <button class="primary" name="apply_job" <?= $applied ? "disabled class='disabled'" : "" ?>>
-        <?= $applied ? "Applied ✓" : "Apply Now" ?>
-      </button>
-    </form>
+    $jobsQuery = $conn->query("SELECT * FROM jobs");
+    while ($job = $jobsQuery->fetch_assoc()) {
+      $applied = in_array($job['id'], $appliedJobs);
+      ?>
+      <form method="POST" class="job card wide">
+        <div>
+          <h4><?= htmlspecialchars($job['title']) ?></h4>
+          <p><?= htmlspecialchars($job['company']) ?> · <?= htmlspecialchars($job['location']) ?></p>
+        </div>
+        <input type="hidden" name="job_id" value="<?= $job['id'] ?>">
+        <button 
+          class="primary <?= $applied ? 'disabled' : '' ?>" 
+          name="apply_job"
+          <?= $applied ? 'disabled' : '' ?>>
+          <?= $applied ? "Applied ✓" : "Apply Now" ?>
+        </button>
+      </form>
     <?php } ?>
 
   </main>

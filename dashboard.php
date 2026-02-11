@@ -87,19 +87,18 @@ $resumeName = ($profile && $profile['resume'])
     </nav>
 
     <div class="user-box">
-  <?php if (!empty($user['profile_pic'])) { ?>
+      <?php if (!empty($user['profile_pic'])) { ?>
       <img src="<?php echo $user['profile_pic']; ?>" alt="Profile">
-  <?php } else { ?>
-      <div class="default-avatar">👤</div>
-  <?php } ?>
+      <?php } else { ?>
+    <div class="default-avatar">👤</div>
+    <?php } ?>
 
-  <p class="name"><?php echo htmlspecialchars($user['full_name']); ?></p>
-  <p class="email"><?php echo htmlspecialchars($user['email']); ?></p>
-
-  <form action="logout.php" method="POST">
+    <p class="name"><?php echo htmlspecialchars($user['full_name']); ?></p>
+    <p class="email"><?php echo htmlspecialchars($user['email']); ?></p>
+    <form action="logout.php" method="POST">
       <button class="logout">Logout</button>
-  </form>
-</div>
+    </form>
+    </div>
   </aside>
 
   <!-- MAIN -->
@@ -112,8 +111,9 @@ $resumeName = ($profile && $profile['resume'])
 
       <!-- 🌗 THEME TOGGLE -->
       <div class="theme-toggle" id="themeToggle">
-        <div class="toggle-circle">🌙</div>
-      </div>
+        <div class="toggle-circle"></div>
+    </div>
+
 
       <div class="user">
         🔔 <img src="https://i.pravatar.cc/40" /> Divy ⌄

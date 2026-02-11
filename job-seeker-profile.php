@@ -7,63 +7,50 @@ if (!isset($_SESSION['user_id'])) {
     exit();
 }
 
-$success = "";
-$error = "";
+$userId = $_SESSION['user_id'];
 
-if (isset($_POST['save_profile'])) {
-
-    $user_id = $_SESSION['user_id'];
+if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $dob = $_POST['dob'];
-    $phone = mysqli_real_escape_string($conn, $_POST['phone']);
-    $location = mysqli_real_escape_string($conn, $_POST['location']);
+    $phone = $_POST['phone'];
+    $location = $_POST['location'];
 
-    // ===== Resume Upload =====
-    $resumeName = "";
+    $resumePath = null;
 
     if (!empty($_FILES['resume']['name'])) {
-
-        $uploadDir = "uploads/resumes/";
-        if (!is_dir($uploadDir)) {
-            mkdir($uploadDir, 0777, true);
-        }
-
+        $folder = "uploads/";
+        if (!is_dir($folder)) {
+            mkdir($folder, 0777, true);}
         $fileName = time() . "_" . basename($_FILES["resume"]["name"]);
-        $targetPath = $uploadDir . $fileName;
-        $fileType = strtolower(pathinfo($targetPath, PATHINFO_EXTENSION));
-        $allowed = ['pdf', 'doc', 'docx'];
-
-        if (!in_array($fileType, $allowed)) {
-            $error = "Only PDF, DOC, DOCX files allowed.";
-        } else {
-            if (move_uploaded_file($_FILES["resume"]["tmp_name"], $targetPath)) {
-                $resumeName = $fileName;
-            } else {
-                $error = "Resume upload failed.";
-            }
-        }
+        $resumePath = $folder . $fileName;
+        move_uploaded_file($_FILES["resume"]["tmp_name"], $resumePath);
     }
 
-    if ($error == "") {
+    /* 🧮 PROFILE COMPLETION */
+    $completion = 0;
+    if ($dob) $completion += 20;
+    if ($phone) $completion += 20;
+    if ($location) $completion += 20;
+    if ($resumePath) $completion += 40;
 
-        // Prevent duplicate profile
-        $check = $conn->query("SELECT id FROM job_seeker_profiles WHERE user_id = $user_id");
+    /* 💾 SAVE PROFILE */
+    $stmt = $conn->prepare(
+        "INSERT INTO job_seeker_profiles (user_id, dob, phone, location, resume)
+         VALUES (?, ?, ?, ?, ?)
+         ON DUPLICATE KEY UPDATE
+         dob=VALUES(dob), phone=VALUES(phone), location=VALUES(location), resume=VALUES(resume)"
+    );
+    $stmt->bind_param("issss", $userId, $dob, $phone, $location, $resumePath);
+    $stmt->execute();
 
-        if ($check->num_rows > 0) {
-            $sql = "UPDATE job_seeker_profiles 
-                    SET dob='$dob', phone='$phone', location='$location', resume='$resumeName'
-                    WHERE user_id=$user_id";
-        } else {
-            $sql = "INSERT INTO job_seeker_profiles (user_id, dob, phone, location, resume)
-                    VALUES ('$user_id', '$dob', '$phone', '$location', '$resumeName')";
-        }
+    /* 🔁 UPDATE USERS TABLE */
+    $update = $conn->prepare(
+        "UPDATE users SET profile_completion=? WHERE id=?"
+    );
+    $update->bind_param("ii", $completion, $userId);
+    $update->execute();
 
-        if ($conn->query($sql)) {
-            header("Location: dashboard.php");
-            exit();
-        } else {
-            $error = "Database error.";
-        }
-    }
+    header("Location: dashboard.php");
+    exit();
 }
 ?>
 

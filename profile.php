@@ -60,10 +60,9 @@ $certificates = $conn->query("SELECT * FROM certificates WHERE user_id = $userId
         .section { background:white; padding:20px; border-radius:10px; margin-bottom:20px; }
         button { padding:8px 15px; background:#4f46e5; color:white; border:none; border-radius:6px; cursor:pointer; }
         .card { background:#f1f3f8; padding:15px; margin:10px 0; border-radius:8px; }
-
-/* MODAL */
-.modal {
-    display:none;
+        /* MODAL */
+        .modal {
+            display:none;
     position:fixed;
     top:0; left:0;
     width:100%; height:100%;

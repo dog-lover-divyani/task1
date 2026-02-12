@@ -10,34 +10,33 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-/* 📝 HANDLE JOB APPLY */
+/* 📝 HANDLE JOB APPLY (ID BASED SYSTEM) */
 if (isset($_POST['apply_job'])) {
-    $job = $_POST['job'];
-    $company = $_POST['company'];
+
+    $jobId = $_POST['job_id'];
 
     $check = $conn->prepare(
-        "SELECT id FROM job_applications WHERE user_id = ? AND job_title = ?"
+        "SELECT id FROM job_applications WHERE user_id = ? AND job_id = ?"
     );
-    $check->bind_param("is", $userId, $job);
+    $check->bind_param("ii", $userId, $jobId);
     $check->execute();
     $check->store_result();
 
     if ($check->num_rows == 0) {
         $applyQuery = $conn->prepare(
-            "INSERT INTO job_applications (user_id, job_title, company)
-             VALUES (?, ?, ?)"
+            "INSERT INTO job_applications (user_id, job_id)
+             VALUES (?, ?)"
         );
-        $applyQuery->bind_param("iss", $userId, $job, $company);
+        $applyQuery->bind_param("ii", $userId, $jobId);
         $applyQuery->execute();
     }
 }
 
-
-/* ✅ FETCH ALREADY APPLIED JOBS */
+/* ✅ FETCH APPLIED JOB IDs */
 $appliedJobs = [];
 
 $appQuery = $conn->prepare(
-    "SELECT job_title FROM job_applications WHERE user_id = ?"
+    "SELECT job_id FROM job_applications WHERE user_id = ?"
 );
 $appQuery->bind_param("i", $userId);
 $appQuery->execute();
@@ -45,13 +44,12 @@ $appQuery->execute();
 $res = $appQuery->get_result();
 
 while ($row = $res->fetch_assoc()) {
-    $appliedJobs[] = $row['job_title'];
+    $appliedJobs[] = $row['job_id'];
 }
-
 
 /* 👤 Fetch user data */
 $userQuery = $conn->prepare(
-    "SELECT id, full_name, email, profile_completion 
+    "SELECT id, full_name, email, profile_completion, profile_pic 
      FROM users 
      WHERE id = ?"
 );
@@ -172,23 +170,30 @@ $resumeName = ($profile && $profile['resume'])
     <h3 class="section-title">Recommended Jobs</h3>
 
     <?php
-    $jobsQuery = $conn->query("SELECT * FROM jobs");
-    while ($job = $jobsQuery->fetch_assoc()) {
+      $jobsQuery = $conn->query("SELECT id,job_title,company location FROM jobs");
+      while ($job = $jobsQuery->fetch_assoc()) {
       $applied = in_array($job['id'], $appliedJobs);
-      ?>
-      <form method="POST" class="job card wide">
-        <div>
-          <h4><?= htmlspecialchars($job['title']) ?></h4>
-          <p><?= htmlspecialchars($job['company']) ?> · <?= htmlspecialchars($job['location']) ?></p>
-        </div>
-        <input type="hidden" name="job_id" value="<?= $job['id'] ?>">
-        <button 
-          class="primary <?= $applied ? 'disabled' : '' ?>" 
-          name="apply_job"
-          <?= $applied ? 'disabled' : '' ?>>
-          <?= $applied ? "Applied ✓" : "Apply Now" ?>
-        </button>
-      </form>
+    ?>
+
+    <form method="POST" class="job card wide">
+      <div>
+        <h4><?= htmlspecialchars($job['job_title']) ?></h4>
+        <p><?= htmlspecialchars($job['location']) ?></p>
+      </div>
+
+      <input type="hidden" name="job_id" value="<?= $job['id'] ?>">
+
+      <button 
+        class="primary <?= $applied ? 'disabled' : '' ?>"
+        name="apply_job"
+        <?= $applied ? 'disabled' : '' ?>>
+
+        <?= $applied ? "Applied ✓" : "Apply Now" ?>
+
+      </button>
+
+    </form>
+
     <?php } ?>
 
   </main>

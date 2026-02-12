@@ -2,7 +2,6 @@
 session_start();
 include("db.php");
 
-/* 🔐 Protect page */
 if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
@@ -10,14 +9,13 @@ if (!isset($_SESSION['user_id'])) {
 
 $userId = $_SESSION['user_id'];
 
-/* 📥 Fetch applied jobs */
-$appQuery = $conn->prepare(
-    "SELECT id, job_title, company, applied_at 
-     FROM job_applications 
-     WHERE user_id = ? 
-     ORDER BY applied_at DESC"
-);
-
+$query = $conn->prepare("
+    SELECT j.job_title, j.location, ja.applied_at
+    FROM job_applications ja
+    JOIN jobs j ON ja.job_id = j.id
+    WHERE ja.user_id = ?
+    ORDER BY ja.applied_at DESC
+");
 $query->bind_param("i", $userId);
 $query->execute();
 $result = $query->get_result();
@@ -55,19 +53,13 @@ $result = $query->get_result();
 
         <?php if ($result->num_rows > 0) { ?>
             
-            <?php while ($job = $result->fetch_assoc()) { ?>
-                
-                <div class="card wide" style="margin-bottom:15px;">
-                    <div>
-                        <h3><?php echo htmlspecialchars($job['job_title']); ?></h3>
-                        <p><?php echo htmlspecialchars($job['company']); ?></p>
-                        <small>
-                            Applied on: 
-                            <?php echo date("d M Y", strtotime($job['applied_at'])); ?>
-                        </small>
-                    </div>
+            <?php while ($row = $result->fetch_assoc()) { ?>
+                <div class="card">
+                    <h3><?= htmlspecialchars($row['job_title']) ?></h3>
+                    <p><?= htmlspecialchars($row['location']) ?></p>
+                    <small>Applied on: <?= date("d M Y", strtotime($row['applied_at'])) ?></small>
                 </div>
-
+                
             <?php } ?>
 
         <?php } else { ?>

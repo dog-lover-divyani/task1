@@ -167,34 +167,48 @@ $resumeName = ($profile && $profile['resume'])
     </section>
 
     <!-- JOBS -->
-    <h3 class="section-title">Recommended Jobs</h3>
+<h3 class="section-title">Recommended Jobs</h3>
 
-    <?php
-      $jobsQuery = $conn->query("SELECT id,job_title,company location FROM jobs");
-      while ($job = $jobsQuery->fetch_assoc()) {
-      $applied = in_array($job['id'], $appliedJobs);
-    ?>
+<?php
+$jobsQuery = $conn->query("SELECT id, job_title, company, location FROM jobs");
 
-    <form method="POST" class="job card wide">
-      <div>
+while ($job = $jobsQuery->fetch_assoc()) {
+
+    $applied = in_array($job['id'], $appliedJobs);
+?>
+
+<form method="POST" class="job card wide">
+
+    <div>
         <h4><?= htmlspecialchars($job['job_title']) ?></h4>
-        <p><?= htmlspecialchars($job['location']) ?></p>
-      </div>
+        <p>
+            <?= htmlspecialchars($job['company']) ?>
+            ·
+            <?= htmlspecialchars($job['location']) ?>
+        </p>
+    </div>
 
-      <input type="hidden" name="job_id" value="<?= $job['id'] ?>">
+    <input type="hidden" name="job_id" value="<?= $job['id'] ?>">
 
-      <button 
-        class="primary <?= $applied ? 'disabled' : '' ?>"
-        name="apply_job"
-        <?= $applied ? 'disabled' : '' ?>>
+    <div style="margin-top:10px; display:flex; gap:10px; align-items:center;">
 
-        <?= $applied ? "Applied ✓" : "Apply Now" ?>
+        <button 
+            class="primary <?= $applied ? 'disabled' : '' ?>"
+            name="apply_job"
+            <?= $applied ? 'disabled' : '' ?>>
+            <?= $applied ? "Applied ✓" : "Apply Now" ?>
+        </button>
 
-      </button>
+        <a href="save-job.php?job_id=<?= $job['id'] ?>" 
+           style="color:#e11d48; text-decoration:none; font-weight:600;">
+            ❤️ Save
+        </a>
 
-    </form>
+    </div>
 
-    <?php } ?>
+</form>
+
+<?php } ?>
 
   </main>
 </div>

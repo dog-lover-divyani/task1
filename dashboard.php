@@ -49,7 +49,7 @@ while ($row = $res->fetch_assoc()) {
 
 /* 👤 Fetch user data */
 $userQuery = $conn->prepare(
-    "SELECT id, full_name, email, profile_completion, profile_pic 
+    "SELECT id, full_name, email, profile_pic 
      FROM users 
      WHERE id = ?"
 );
@@ -59,17 +59,58 @@ $user = $userQuery->get_result()->fetch_assoc();
 
 /* 📄 Fetch resume */
 $profileQuery = $conn->prepare(
-    "SELECT resume 
+    "SELECT dob, phone, headline, address, about, linkedin, resume 
      FROM job_seeker_profiles 
      WHERE user_id = ?"
 );
+
 $profileQuery->bind_param("i", $userId);
 $profileQuery->execute();
 $profile = $profileQuery->get_result()->fetch_assoc();
 
-$resumeName = ($profile && $profile['resume'])
+/* 🧮 PROFILE COMPLETION LOGIC */
+$completion = 0;
+
+/* BASIC INFO (from users table + profile table) */
+if (!empty($user['full_name'])) $completion += 5;
+if (!empty($user['email'])) $completion += 5;
+
+if (!empty($profile['phone'])) $completion += 5;
+if (!empty($profile['dob'])) $completion += 5;
+if (!empty($profile['headline'])) $completion += 5;
+if (!empty($profile['address'])) $completion += 5;
+if (!empty($profile['about'])) $completion += 5;
+if (!empty($profile['linkedin'])) $completion += 5;
+
+/* RESUME */
+if (!empty($profile['resume'])) $completion += 20;
+
+/* EDUCATION */
+$eduCheck = $conn->prepare("SELECT id FROM education WHERE user_id=?");
+$eduCheck->bind_param("i", $userId);
+$eduCheck->execute();
+$eduCheck->store_result();
+if ($eduCheck->num_rows > 0) $completion += 15;
+
+/* EXPERIENCE */
+$expCheck = $conn->prepare("SELECT id FROM experience WHERE user_id=?");
+$expCheck->bind_param("i", $userId);
+$expCheck->execute();
+$expCheck->store_result();
+if ($expCheck->num_rows > 0) $completion += 15;
+
+/* SKILLS */
+$skillCheck = $conn->prepare("SELECT id FROM skills WHERE user_id=?");
+$skillCheck->bind_param("i", $userId);
+$skillCheck->execute();
+$skillCheck->store_result();
+if ($skillCheck->num_rows > 0) $completion += 10;
+
+
+$resumeName = (!empty($profile['resume']))
     ? basename($profile['resume'])
     : "No resume uploaded";
+
 ?>
 
 <!DOCTYPE html>
@@ -142,7 +183,11 @@ $resumeName = ($profile && $profile['resume'])
 
     <!-- STATS -->
     <section class="stats">
-      <div class="card"><h2>75%</h2><p>Profile Completion</p></div>
+      <div class="card">
+    <h2><?= $completion ?>%</h2>
+    <p>Profile Completion</p>
+</div>
+
       <div class="card"><h2><?= count($appliedJobs) ?></h2><p>Applied Jobs</p></div>
       <div class="card"><h2>6</h2><p>Saved Jobs</p></div>
       <div class="card"><h2>2</h2><p>Interview Calls</p></div>

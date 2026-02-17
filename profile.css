@@ -35,19 +35,23 @@ body {
 .profile-container {
     width: 100%;
     max-width: 720px;
+
+    /* 👇 tighter padding = no overflow */
     padding: 22px 32px;
+
     background: var(--glass-bg);
     backdrop-filter: blur(8px);
     border-radius: 14px;
+
     border: 1.5px solid rgba(255, 255, 255, 0.25);
+
     box-shadow:
         0 0 25px var(--border-glow),
         inset 0 0 18px rgba(255, 255, 255, 0.05);
 
-    max-height: 90vh;
-    overflow-y: auto;
+    /* ❌ no scrolling at all */
+    overflow: hidden;
 }
-
 
 /* HEADINGS */
 h2 {

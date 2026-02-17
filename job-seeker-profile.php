@@ -42,12 +42,12 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $stmt->bind_param("issss", $userId, $dob, $phone, $location, $resumePath);
     $stmt->execute();
 
-    /* 🔁 UPDATE USERS TABLE */
+    /* 🔁 UPDATE USERS TABLE 
     $update = $conn->prepare(
         "UPDATE users SET profile_completion=? WHERE id=?"
     );
     $update->bind_param("ii", $completion, $userId);
-    $update->execute();
+    $update->execute();*/
 
     header("Location: dashboard.php");
     exit();

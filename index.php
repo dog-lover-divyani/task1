@@ -31,34 +31,47 @@ if (isset($_POST['register'])) {
 // --- Login Logic ---
 // --- Updated Login Logic in index.php ---
 if (isset($_POST['login'])) {
+
     $email = mysqli_real_escape_string($conn, $_POST['email']);
     $password = $_POST['password'];
-    $sql = "SELECT * FROM users WHERE email='$email'";
+    $selected_role = $_POST['login_role'];
+
+    $sql = "SELECT * FROM users WHERE email='$email' AND role='$selected_role'";
     $result = $conn->query($sql);
 
     if ($result->num_rows > 0) {
+
         $user = $result->fetch_assoc();
+
         if (password_verify($password, $user['password'])) {
-            // Set session variables
+
             $_SESSION['user_id'] = $user['id'];
             $_SESSION['user_name'] = $user['full_name'];
-            
-            // Set "Flash" message for the Welcome page
+            $_SESSION['user_role'] = $user['role'];
+
             $_SESSION['toast_msg'] = "Login successful! Welcome back, " . $user['full_name'];
             $_SESSION['toast_type'] = "success";
 
-            // Redirect to welcome page
-            header("Location: welcome.php");
-            exit(); // Always call exit after header redirect
-        } else { 
-            $message = "Invalid password."; 
+            // Redirect based on role
+            if ($user['role'] == "candidate") {
+                header("Location: welcome.php");
+            } else {
+                header("Location: employer-dashboard.php");
+            }
+
+            exit();
+
+        } else {
+            $message = "Invalid password.";
             $msgClass = "error";
         }
-    } else { 
-        $message = "No account found."; 
+
+    } else {
+        $message = "You are not registered as this role!";
         $msgClass = "error";
     }
 }
+
 
 // --- Multi-Step Forgot Password Logic ---
 if (isset($_POST['verify_email'])) {
@@ -144,6 +157,23 @@ if (isset($_POST['update_password'])) {
                     <label for="rem-pass">Remember Password</label>
                 </div>
                 <button type="submit" name="login" class="submit-btn">Log In</button>
+
+                <div class="role-container">
+                    <p>Login as:</p>
+                    <div class="role-selection">
+                        <input type="radio" name="login_role" id="login_candidate" value="candidate" checked>
+                        <label for="login_candidate" class="role-card">
+                            <i class="fa-solid fa-user-tie"></i>
+                            <span>Candidate</span>
+                        </label>
+
+                        <input type="radio" name="login_role" id="login_employer" value="employer">
+                        <label for="login_employer" class="role-card">
+                            <i class="fa-solid fa-building"></i>
+                            <span>Employer</span>
+                        </label>
+                    </div>
+                </div>
             </form>
 
             <form id="register" method="POST" action="index.php" class="input-group">

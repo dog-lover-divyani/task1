@@ -2,14 +2,31 @@
 session_start();
 include("db.php");
 
-// Protect Page
-if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'employer') {
+if (!isset($_SESSION['user_id'])) {
     header("Location: index.php");
     exit();
 }
 
-$userId = $_SESSION['user_id'];
-$userName = $_SESSION['user_name'];
+$employerId = $_SESSION['user_id'];
+
+/* Employer Info */
+$userQuery = $conn->prepare(
+    "SELECT full_name, email, profile_pic 
+     FROM users 
+     WHERE id = ?"
+);
+$userQuery->bind_param("i", $employerId);
+$userQuery->execute();
+$user = $userQuery->get_result()->fetch_assoc();
+$userName = $user['full_name']; // <-- ADD THIS
+
+/* Fetch Employer Jobs */
+$jobsQuery = $conn->prepare(
+    "SELECT * FROM jobs WHERE employer_id = ?"
+);
+$jobsQuery->bind_param("i", $employerId);
+$jobsQuery->execute();
+$jobsResult = $jobsQuery->get_result();
 ?>
 
 <!DOCTYPE html>

@@ -24,7 +24,7 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
         $status = "Rejected";
     }
 
-    $stmt = $conn->prepare("UPDATE applications SET status=? WHERE id=?");
+    $stmt = $conn->prepare("UPDATE job_applications SET status=? WHERE id=?");
     $stmt->bind_param("si", $status, $applicationId);
     $stmt->execute();
 
@@ -35,10 +35,18 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
 /* -------------------------
    FETCH APPLICATIONS
 --------------------------*/
-$query = "SELECT applications.*, jobs.job_title 
-          FROM applications
-          JOIN jobs ON applications.job_id = jobs.id
-          WHERE jobs.employer_id = ?";
+$query = "SELECT 
+            ja.id,
+            u.full_name AS applicant_name,
+            u.email,
+            j.job_title,
+            jsp.resume,
+            ja.status
+          FROM job_applications ja
+          JOIN jobs j ON ja.job_id = j.id
+          JOIN users u ON ja.user_id = u.id
+          LEFT JOIN job_seeker_profiles jsp ON ja.user_id = jsp.user_id
+          WHERE j.employer_id = ?";
 
 $stmt = $conn->prepare($query);
 $stmt->bind_param("i", $employerId);
@@ -52,7 +60,6 @@ $result = $stmt->get_result();
 <title>View Applicants</title>
 
 <style>
-/* YOUR SAME CSS (unchanged) */
 body{
     margin:0;
     font-family: 'Segoe UI', sans-serif;

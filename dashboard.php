@@ -184,9 +184,9 @@ $resumeName = (!empty($profile['resume']))
     <!-- STATS -->
     <section class="stats">
       <div class="card">
-    <h2><?= $completion ?>%</h2>
-    <p>Profile Completion</p>
-</div>
+        <h2><?= $completion ?>%</h2>
+        <p>Profile Completion</p>
+      </div>
 
       <div class="card"><h2><?= count($appliedJobs) ?></h2><p>Applied Jobs</p></div>
       <div class="card"><h2>6</h2><p>Saved Jobs</p></div>
@@ -212,7 +212,7 @@ $resumeName = (!empty($profile['resume']))
     </section>
 
     <!-- JOBS -->
-<h3 class="section-title">Recommended Jobs</h3>
+  <h3 class="section-title">Recommended Jobs</h3>
 
 <?php
 $jobsQuery = $conn->query("SELECT id, job_title, company, location FROM jobs");

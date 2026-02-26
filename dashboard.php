@@ -175,7 +175,7 @@ $resumeName = (!empty($profile['resume']))
     <!-- WELCOME -->
     <section class="welcome">
       <div>
-        <h1>Welcome, <?php echo $userName; ?> 👋</h1>
+        <h1>Welcome, <?php echo htmlspecialchars($user['full_name']); ?> 👋</h1>
         <p>Your career dashboard at a glance</p>
       </div>
       <button class="primary">Complete Profile</button>

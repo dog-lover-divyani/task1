@@ -8,10 +8,12 @@ if (!isset($_SESSION['user_id']) || $_SESSION['user_role'] != 'employer') {
 }
 
 $employerId = $_SESSION['user_id'];
-$userName = $_SESSION['user_name'];
 
-// Dummy fetch (UI focus only)
-$result = $conn->query("SELECT * FROM jobs WHERE employer_id = $employerId");
+/* Fetch jobs */
+$stmt = $conn->prepare("SELECT * FROM jobs WHERE employer_id = ?");
+$stmt->bind_param("i", $employerId);
+$stmt->execute();
+$result = $stmt->get_result();
 ?>
 
 <!DOCTYPE html>
@@ -20,6 +22,8 @@ $result = $conn->query("SELECT * FROM jobs WHERE employer_id = $employerId");
 <title>Manage Jobs</title>
 
 <style>
+/* (YOUR EXISTING CSS — unchanged for cleanliness) */
+
 body{
     margin:0;
     font-family: 'Segoe UI', sans-serif;
@@ -29,12 +33,8 @@ body{
     min-height:100vh;
 }
 
-.dashboard-container{
-    display:flex;
-    min-height:100vh;
-}
+.dashboard-container{ display:flex; min-height:100vh; }
 
-/* Sidebar */
 .sidebar{
     width:250px;
     background: rgba(255, 255, 255, 0.05);
@@ -44,10 +44,7 @@ body{
     border-right:1px solid rgba(255,255,255,0.1);
 }
 
-.sidebar h2{
-    margin-bottom:40px;
-    text-align:center;
-}
+.sidebar h2{ margin-bottom:40px; text-align:center; }
 
 .sidebar a{
     display:block;
@@ -59,47 +56,32 @@ body{
     transition:0.3s;
 }
 
-.sidebar a:hover{
-    background: rgba(255,255,255,0.12);
-}
+.sidebar a:hover{ background: rgba(255,255,255,0.12); }
 
-/* Main */
-.main{
-    flex:1;
-    padding:60px;
-    color:white;
-}
+.main{ flex:1; padding:60px; color:white; }
 
-h1{
-    margin-bottom:30px;
-}
+h1{ margin-bottom:30px; }
 
-/* Glass Table Container */
 .table-card{
     background: rgba(255, 255, 255, 0.12);
     backdrop-filter: blur(18px);
     border-radius:20px;
     padding:30px;
     box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    border:2px solid transparent;
-    transition:0.3s;
+    overflow-x:auto;
 }
 
-.table-card:hover{
-    border:2px solid #8a2be2;
-    box-shadow: 0 0 15px #8a2be2;
-}
-
-/* Table */
 table{
     width:100%;
     border-collapse: collapse;
     color:white;
+    table-layout: fixed;
 }
 
 th, td{
     padding:15px;
     text-align:left;
+    word-wrap: break-word;
 }
 
 th{
@@ -110,7 +92,10 @@ tr:hover{
     background: rgba(255,255,255,0.08);
 }
 
-/* Action Buttons */
+td:nth-child(6){
+    max-width:250px;
+}
+
 .action-btn{
     padding:8px 15px;
     border-radius:6px;
@@ -118,6 +103,8 @@ tr:hover{
     color:white;
     font-size:14px;
     transition:0.3s;
+    display:inline-block;
+    margin-right:5px;
 }
 
 .edit-btn{
@@ -139,58 +126,69 @@ tr:hover{
 
 <div class="dashboard-container">
 
-    <div class="sidebar">
-        <h2>Employer Panel</h2>
-        <a href="employer-dashboard.php">🏠 Dashboard</a>
-        <a href="post-job.php">➕ Post Job</a>
-        <a href="manage-jobs.php">📋 Manage Jobs</a>
-        <a href="view-applicants.php">👥 View Applicants</a>
-        <a href="employer-profile.php">👤 My Profile</a>
-        <a href="logout.php">🚪 Logout</a>
-    </div>
+<div class="sidebar">
+    <h2>Employer Panel</h2>
+    <a href="employer-dashboard.php">🏠 Dashboard</a>
+    <a href="post-job.php">➕ Post Job</a>
+    <a href="manage-jobs.php">📋 Manage Jobs</a>
+    <a href="view-applicants.php">👥 View Applicants</a>
+    <a href="employer-profile.php">👤 My Profile</a>
+    <a href="logout.php">🚪 Logout</a>
+</div>
 
-    <div class="main">
-        <h1>Manage Your Jobs</h1>
+<div class="main">
+<h1>Manage Your Jobs</h1>
 
-        <div class="table-card">
+<div class="table-card">
 
-            <table>
-                <tr>
-                    <th>Job Title</th>
-                    <th>Company</th>
-                    <th>Location</th>
-                    <th>Salary(Monthly)</th>
-                    <th>Job Type</th>
-                    <th>Description</th>
-                    <th>Actions</th>
-                </tr>
+<table>
+<tr>
+    <th>Job Title</th>
+    <th>Company</th>
+    <th>Location</th>
+    <th>Salary</th>
+    <th>Job Type</th>
+    <th>Description</th>
+    <th>Actions</th>
+</tr>
 
-                <?php
-                if($result->num_rows > 0){
-                    while($row = $result->fetch_assoc()){
-                        echo "<tr>
-                                <td>{$row['job_title']}</td>
-                                <td>{$row['company']}</td>
-                                <td>{$row['location']}</td>
-                                <td>{$row['salary']}</td>
-                                <td>{$row['job_type']}</td>
-                                <td>{$row['description']}</td>
-                                <td>
-                                    <a href='#' class='action-btn edit-btn'>Edit</a>
-                                    <a href='#' class='action-btn delete-btn'>Delete</a>
-                                </td>
-                              </tr>";
-                    }
-                } else {
-                    echo "<tr><td colspan='5'>No jobs posted yet.</td></tr>";
-                }
-                ?>
+<?php while($row = $result->fetch_assoc()) { ?>
 
-            </table>
+<tr>
+    <td><?= htmlspecialchars($row['job_title']); ?></td>
+    <td><?= htmlspecialchars($row['company']); ?></td>
+    <td><?= htmlspecialchars($row['location']); ?></td>
+    <td><?= htmlspecialchars($row['salary']); ?></td>
+    <td><?= htmlspecialchars($row['job_type']); ?></td>
+    <td><?= htmlspecialchars($row['description']); ?></td>
 
-        </div>
+    <td>
+        <a href="edit-job.php?id=<?= $row['id']; ?>" 
+           class="action-btn edit-btn">
+            Edit
+        </a>
 
-    </div>
+        <a href="delete-job.php?id=<?= $row['id']; ?>" 
+           class="action-btn delete-btn"
+           onclick="return confirm('Are you sure you want to delete this job?');">
+            Delete
+        </a>
+    </td>
+</tr>
+
+<?php } ?>
+
+<?php if($result->num_rows == 0){ ?>
+<tr>
+    <td colspan="7">No jobs posted yet.</td>
+</tr>
+<?php } ?>
+
+</table>
+
+</div>
+
+</div>
 
 </div>
 

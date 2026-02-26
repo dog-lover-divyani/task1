@@ -19,14 +19,18 @@ if (isset($_GET['action']) && isset($_GET['id'])) {
     $action = $_GET['action'];
 
     if ($action == "approve") {
-        $status = "Accepted";
-    } elseif ($action == "reject") {
-        $status = "Rejected";
-    }
 
-    $stmt = $conn->prepare("UPDATE job_applications SET status=? WHERE id=?");
-    $stmt->bind_param("si", $status, $applicationId);
-    $stmt->execute();
+        $stmt = $conn->prepare("UPDATE job_applications SET status='Accepted' WHERE id=?");
+        $stmt->bind_param("i", $applicationId);
+        $stmt->execute();
+
+    } elseif ($action == "reject") {
+
+        $stmt = $conn->prepare("DELETE FROM job_applications WHERE id=?");
+        $stmt->bind_param("i", $applicationId);
+        $stmt->execute();
+
+    }
 
     header("Location: view-applicants.php");
     exit();
@@ -60,6 +64,7 @@ $result = $stmt->get_result();
 <title>View Applicants</title>
 
 <style>
+/* (Your existing CSS remains exactly the same — no changes needed) */
 body{
     margin:0;
     font-family: 'Segoe UI', sans-serif;
@@ -176,18 +181,39 @@ tr:hover{ background: rgba(255,255,255,0.08); }
 if($result && $result->num_rows > 0){
     while($row = $result->fetch_assoc()){
         $statusClass = strtolower($row['status']);
+?>
 
-        echo "<tr>
-            <td>{$row['applicant_name']}</td>
-            <td>{$row['email']}</td>
-            <td>{$row['job_title']}</td>
-            <td><a href='uploads/{$row['resume']}' target='_blank' class='action-btn view-btn'>View</a></td>
-            <td><span class='status $statusClass'>{$row['status']}</span></td>
-            <td>
-                <a href='?action=approve&id={$row['id']}' class='action-btn approve-btn'>Approve</a>
-                <a href='?action=reject&id={$row['id']}' class='action-btn reject-btn'>Reject</a>
-            </td>
-        </tr>";
+<tr>
+    <td><?= htmlspecialchars($row['applicant_name']); ?></td>
+    <td><?= htmlspecialchars($row['email']); ?></td>
+    <td><?= htmlspecialchars($row['job_title']); ?></td>
+
+    <!-- ✅ EDITED RESUME SECTION -->
+    <td>
+<?php if (!empty($row['resume'])) { ?>
+    <a href="/task1/uploads/resumes/<?= htmlspecialchars($row['resume']); ?>" 
+       target="_blank" 
+       class="action-btn view-btn">
+        Download Resume
+    </a>
+<?php } else { ?>
+    <p style="margin:0;">No resume uploaded</p>
+<?php } ?>
+</td>
+
+    <td>
+        <span class="status <?= $statusClass; ?>">
+            <?= htmlspecialchars($row['status']); ?>
+        </span>
+    </td>
+
+    <td>
+        <a href="?action=approve&id=<?= $row['id']; ?>" class="action-btn approve-btn">Approve</a>
+        <a href="?action=reject&id=<?= $row['id']; ?>" class="action-btn reject-btn">Reject</a>
+    </td>
+</tr>
+
+<?php
     }
 } else {
     echo "<tr><td colspan='6'>No applicants yet.</td></tr>";

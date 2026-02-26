@@ -17,13 +17,18 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     $resumePath = null;
 
     if (!empty($_FILES['resume']['name'])) {
-        $folder = "uploads/";
-        if (!is_dir($folder)) {
-            mkdir($folder, 0777, true);}
-        $fileName = time() . "_" . basename($_FILES["resume"]["name"]);
-        $resumePath = $folder . $fileName;
-        move_uploaded_file($_FILES["resume"]["tmp_name"], $resumePath);
-    }
+
+    $folder = "uploads/resumes/";
+
+if (!is_dir($folder)) {
+    mkdir($folder, 0777, true);
+}
+
+$fileName = time() . "_" . basename($_FILES["resume"]["name"]);
+$resumePath = $fileName; // ONLY store filename in DB
+
+move_uploaded_file($_FILES["resume"]["tmp_name"], $folder . $fileName);
+}
 
     /* 🧮 PROFILE COMPLETION */
     $completion = 0;

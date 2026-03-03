@@ -1,7 +1,12 @@
 <?php
-$conn = mysqli_connect("localhost", "root", "", "job_portal");
+$host = "sql100.infinityfree.com";
+$user = "if0_41255947";
+$pass = "RadhaKrishna04";
+$db   = "if0_41255947_job_portal";
+
+$conn = mysqli_connect($host, $user, $pass, $db, 3306);
 
 if (!$conn) {
-    die("Database connection failed: " . mysqli_connect_error());
+    die("Connection failed: " . mysqli_connect_error());
 }
 ?>
